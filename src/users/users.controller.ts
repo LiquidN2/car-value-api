@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Query,
+  Session,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -25,9 +26,28 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
+  @Get('/whoami')
+  whoAmI(@Session() session: any) {
+    return this.usersService.findOne(session.userId);
+  }
+
+  @Post('/signout')
+  signOut(@Session() session: any) {
+    session.userId = null;
+  }
+
+  @Post('/signin')
+  async signinUser(@Body() body: CreateUsersDto, @Session() session: any) {
+    const user = await this.authService.signin(body.email, body.password);
+    session.userId = user.id;
+    return user;
+  }
+
   @Post('/signup')
-  async createUser(@Body() body: CreateUsersDto) {
-    return await this.authService.signup(body.email, body.password);
+  async createUser(@Body() body: CreateUsersDto, @Session() session: any) {
+    const user = await this.authService.signup(body.email, body.password);
+    session.userId = user.id;
+    return user;
   }
 
   @Patch('/:id')
@@ -56,10 +76,5 @@ export class UsersController {
   @Delete('/:id')
   deleteUser(@Param('id') id: string) {
     return this.usersService.remove(parseInt(id));
-  }
-
-  @Post('/signin')
-  async authenticateUser(@Body() body: CreateUsersDto) {
-    return await this.authService.signin(body.email, body.password);
   }
 }
