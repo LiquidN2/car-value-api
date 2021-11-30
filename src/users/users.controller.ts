@@ -1,20 +1,24 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Patch,
   Param,
   Post,
   Query,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
+
+import { UsersService } from './users.service';
+import { UserDto } from './dtos/user.dto';
 import { CreateUsersDto } from './dtos/create-users.dto';
 import { UpdateUsersDto } from './dtos/update-users.dto';
-import { UsersService } from './users.service';
+import { Serialize } from '../interceptors/serialize.interceptor';
 
 @Controller('/auth')
+@Serialize(UserDto)
 export class UsersController {
   constructor(private userService: UsersService) {}
 
@@ -34,6 +38,7 @@ export class UsersController {
 
   @Get('/:id')
   async findUser(@Param('id') id: string) {
+    console.log('Hanlder is running');
     const user = await this.userService.findOne(parseInt(id));
     if (!user) {
       throw new NotFoundException('user not found');
