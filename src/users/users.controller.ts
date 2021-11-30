@@ -7,10 +7,10 @@ import {
   Param,
   Post,
   Query,
-  BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
 
+import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
 import { UserDto } from './dtos/user.dto';
 import { CreateUsersDto } from './dtos/create-users.dto';
@@ -20,26 +20,24 @@ import { Serialize } from '../interceptors/serialize.interceptor';
 @Controller('/auth')
 @Serialize(UserDto)
 export class UsersController {
-  constructor(private userService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
 
   @Post('/signup')
   async createUser(@Body() body: CreateUsersDto) {
-    try {
-      return await this.userService.create(body.email, body.password);
-    } catch (err) {
-      throw new BadRequestException(err.message);
-    }
+    return await this.authService.signup(body.email, body.password);
   }
 
   @Patch('/:id')
   async updateUser(@Param('id') id: string, @Body() body: UpdateUsersDto) {
-    return await this.userService.update(parseInt(id), body);
+    return await this.usersService.update(parseInt(id), body);
   }
 
   @Get('/:id')
   async findUser(@Param('id') id: string) {
-    console.log('Hanlder is running');
-    const user = await this.userService.findOne(parseInt(id));
+    const user = await this.usersService.findOne(parseInt(id));
     if (!user) {
       throw new NotFoundException('user not found');
     }
@@ -48,7 +46,7 @@ export class UsersController {
 
   @Get()
   async findAllUsers(@Query('email') email: string) {
-    const users = await this.userService.find(email);
+    const users = await this.usersService.find(email);
     if (users.length === 0) {
       throw new NotFoundException('User(s) not found');
     }
@@ -57,6 +55,11 @@ export class UsersController {
 
   @Delete('/:id')
   deleteUser(@Param('id') id: string) {
-    return this.userService.remove(parseInt(id));
+    return this.usersService.remove(parseInt(id));
+  }
+
+  @Post('/signin')
+  async authenticateUser(@Body() body: CreateUsersDto) {
+    return await this.authService.signin(body.email, body.password);
   }
 }

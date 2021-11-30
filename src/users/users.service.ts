@@ -9,14 +9,14 @@ export class UsersService {
   // @InjectRepository decorator will help DI in this case
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
-  create(email: string, password: string) {
+  async create(email: string, password: string) {
     // Create an User entity instance
     const user = this.repo.create({ email, password });
 
     // If save an entity instance, all the hooks (@AfterInsert, @AfterUpdate, ...)
     // tied to that instance will be executed.
     // If save data directly, no hooks will be executed
-    return this.repo.save(user);
+    return await this.repo.save(user);
   }
 
   findOne(id: number) {
