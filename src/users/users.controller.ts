@@ -9,6 +9,7 @@ import {
   Query,
   Session,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -19,6 +20,7 @@ import { UpdateUsersDto } from './dtos/update-users.dto';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './user.entity';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('/auth')
 @Serialize(UserDto)
@@ -29,6 +31,7 @@ export class UsersController {
   ) {}
 
   @Get('/whoami')
+  @UseGuards(AuthGuard)
   whoAmI(@CurrentUser() user: User) {
     return user;
   }
@@ -53,6 +56,7 @@ export class UsersController {
   }
 
   @Patch('/:id')
+  @UseGuards(AuthGuard)
   async updateUser(@Param('id') id: string, @Body() body: UpdateUsersDto) {
     return await this.usersService.update(parseInt(id), body);
   }
