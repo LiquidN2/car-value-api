@@ -14,7 +14,7 @@ import { CurrentUserInterceptor } from './interceptors/current-user.interceptor'
   providers: [
     UsersService,
     AuthService,
-    // apply interceptor globally
+    // globally scoped interceptor
     {
       provide: APP_INTERCEPTOR,
       useClass: CurrentUserInterceptor,
