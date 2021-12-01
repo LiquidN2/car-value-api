@@ -7,6 +7,8 @@ describe('Authentication System', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
+    // await rm(join(__dirname, '..', 'test.sqlite'));
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
