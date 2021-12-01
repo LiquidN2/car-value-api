@@ -5,13 +5,13 @@ import { User } from './user.entity';
 
 describe('AuthService', () => {
   let service: AuthService = null;
-  let fakeUsersService: Partial<UsersService>;
+  let mockUsersService: Partial<UsersService>;
 
   beforeEach(async () => {
     const users: User[] = [];
 
     // Create a mock UsersService
-    fakeUsersService = {
+    mockUsersService = {
       // find and create are used by AuthService
       find: (email: string) => {
         const filteredUsers = users.filter(user => user.email === email);
@@ -37,12 +37,12 @@ describe('AuthService', () => {
         // Replace the instance of UserService by a mock obj
         {
           provide: UsersService,
-          useValue: fakeUsersService,
+          useValue: mockUsersService,
         },
       ],
     }).compile();
 
-    service = module.get(AuthService);
+    service = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', async () => {
