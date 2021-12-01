@@ -32,4 +32,26 @@ describe('Authentication System', () => {
         expect(email).toBe(mockEmail);
       });
   });
+
+  it('should signup a new user and get the currently signed in user', async () => {
+    const mockEmail = 'asdca@test.com';
+    const mockPassword = 'asdvasdv';
+
+    // Sign Up
+    const response = await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({ email: mockEmail, password: mockPassword })
+      .expect(201);
+
+    // Get cookie from response
+    const cookie = response.get('Set-Cookie');
+
+    // Get body response from 'auth/whoami'
+    const { body } = await request(app.getHttpServer())
+      .get('/auth/whoami')
+      .set('Cookie', cookie)
+      .expect(200);
+
+    expect(body.email).toEqual(mockEmail);
+  });
 });
