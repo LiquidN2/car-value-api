@@ -1,27 +1,15 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-const cookieSession = require('cookie-session'); // using require instead of import due to conflict with typescript setting
+// import { setupApp } from './setup-app';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.use(
-    cookieSession({
-      keys: ['cookieSecret'],
-    }),
-  );
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true, // additional properties in request body will be stripped by Dto
-    }),
-  );
+  // App setup is moved to app.module
+  // setupApp(app);
 
   const port = 3000;
-
   await app.listen(port);
-
   return port;
 }
 bootstrap().then(port =>
