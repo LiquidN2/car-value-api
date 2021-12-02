@@ -5,7 +5,9 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from 'typeorm';
+import { Report } from '../reports/report.entity';
 
 // Entity decorator tells TypeORM to create a table from a class
 @Entity()
@@ -18,6 +20,12 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({ default: false })
+  isAdmin: boolean;
+
+  @OneToMany(() => Report, report => report.user)
+  reports: Report[];
 
   // Hook decorator
   @AfterInsert()
