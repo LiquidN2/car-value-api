@@ -26,7 +26,7 @@ module.exports = class initialSchema1638432159474 {
           {
             name: 'admin',
             type: 'boolean',
-            default: 'true',
+            default: false,
           },
         ],
       }),
