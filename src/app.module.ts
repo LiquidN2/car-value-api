@@ -8,8 +8,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ReportsModule } from './reports/reports.module';
-import { User } from './users/user.entity';
-import { Report } from './reports/report.entity';
+// import { User } from './users/user.entity';
+// import { Report } from './reports/report.entity';
 
 @Module({
   imports: [
@@ -19,17 +19,18 @@ import { Report } from './reports/report.entity';
     }),
 
     // Setup DB Connection
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory(config: ConfigService) {
-        return {
-          type: 'sqlite', // DB type
-          database: config.get<string>('DB_NAME'), // Save data in a file named db.sqlite
-          entities: [User, Report], // Models/tables in the DB
-          synchronize: true, // ONLY IN DEVELOPMENT as this feature allows TypeOrm to change the t
-        };
-      },
-    }),
+    TypeOrmModule.forRoot(),
+    // TypeOrmModule.forRootAsync({
+    //   inject: [ConfigService],
+    //   useFactory(config: ConfigService) {
+    //     return {
+    //       type: 'sqlite', // DB type
+    //       database: config.get<string>('DB_NAME'), // Save data in a file named db.sqlite
+    //       entities: [User, Report], // Models/tables in the DB
+    //       synchronize: true, // ONLY IN DEVELOPMENT as this feature allows TypeOrm to change the t
+    //     };
+    //   },
+    // }),
 
     UsersModule,
 
@@ -49,12 +50,14 @@ import { Report } from './reports/report.entity';
   ],
 })
 export class AppModule {
+  constructor(private configService: ConfigService) {}
+
   // Setup global middleware
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(
         cookieSession({
-          keys: [process.env.COOKIE_SECRET],
+          keys: [this.configService.get<string>('COOKIE_KEY')],
         }),
       )
       .forRoutes('*');

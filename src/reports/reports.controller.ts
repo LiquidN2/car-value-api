@@ -22,13 +22,13 @@ import { Serialize } from '../interceptors/serialize.interceptor';
 import { GetEstimateDto } from './dtos/get-estimate.dto';
 
 @Controller('reports')
-// @Serialize(ReportDto)
+@Serialize(ReportDto)
 export class ReportsController {
   constructor(private reportsService: ReportsService) {}
 
   @Post()
   @UseGuards(AuthGuard)
-  @Serialize(ReportDto)
+  // @Serialize(ReportDto)
   createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
     return this.reportsService.create(body, user);
   }
@@ -43,6 +43,7 @@ export class ReportsController {
   }
 
   @Get('/:id')
+  // @Serialize(ReportDto)
   async findReport(@Param('id') id: string) {
     const report = await this.reportsService.findOne(parseInt(id));
     if (!report) {

@@ -19,7 +19,7 @@ export class ReportsService {
 
   async findOne(id: number) {
     if (!id) return null;
-    return await this.repo.findOne(id);
+    return await this.repo.findOne(id, { relations: ['user'] });
   }
 
   async changeApproval(id: number, approved: boolean) {
